@@ -1,5 +1,4 @@
 #include "DefaultRunloop.hpp"
-#include <chrono>
 #include <iostream>
 #include <thread>
 
@@ -29,12 +28,15 @@ void DefaultRunloop::stop() {
 void DefaultRunloop::run() {
   running_ = true;
   while (running_) {
-    std::cout << "ha ha ha" << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+      epoll_.process(100);
   }
   std::unique_lock<std::mutex> lock{mutex_};
   cond_.notify_one();
 }
 
-void DefaultRunloop::regist(const Handler &handler, const Event event) {}
-void DefaultRunloop::unregist(const Handler &handler) {}
+void DefaultRunloop::regist(std::shared_ptr<Handler> handler, const Event event) {
+    return epoll_.add(handler, event);
+}
+void DefaultRunloop::unregist(std::shared_ptr<Handler> handler) {
+    return epoll_.del(handler);
+}

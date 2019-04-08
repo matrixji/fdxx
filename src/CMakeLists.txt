@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 3.0)
 
+set(CMAKE_CXX_STANDARD 14)
+
 project(fdxx)
 
 set(fdxx_sources
     src/DefaultRunloop.cpp
     src/RunloopFactory.cpp
+    src/LinuxEpoll.cpp
     )
 
 include_directories(

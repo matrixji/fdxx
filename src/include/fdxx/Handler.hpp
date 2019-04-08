@@ -7,12 +7,12 @@ class Runloop;
 
 class Handler {
 public:
-  Handler() = delete;
+  Handler() = default;
   Handler(const Handler &) = delete;
   Handler &operator=(const Handler &) = delete;
   virtual ~Handler() = default;
   virtual int fd() = 0;
-  virtual void handle(const Event &, const Runloop &) = 0;
+  virtual void handle(const Event &) = 0;
 };
 
 } // namespace fdxx

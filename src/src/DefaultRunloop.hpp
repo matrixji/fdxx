@@ -3,6 +3,9 @@
 #include <condition_variable>
 #include <mutex>
 
+#include "Epoll.hpp"
+#include "LinuxEpoll.hpp"
+
 namespace fdxx {
 class Handler;
 
@@ -12,8 +15,8 @@ public:
   DefaultRunloop(const Runloop &) = delete;
   DefaultRunloop &operator=(const DefaultRunloop &) = delete;
   virtual ~DefaultRunloop();
-  void regist(const Handler &, const Event) override;
-  void unregist(const Handler &) override;
+  void regist(std::shared_ptr<Handler>, const Event) override;
+  void unregist(std::shared_ptr<Handler>) override;
   void run() override;
   void start() override;
   void stop() override;
@@ -21,7 +24,8 @@ public:
 private:
   std::string name_;
   bool running_{false};
-  std::mutex mutex_;
-  std::condition_variable cond_;
+  std::mutex mutex_{};
+  std::condition_variable cond_{};
+  Epoll<LinuxEpoll> epoll_{};
 };
 } // namespace fdxx
