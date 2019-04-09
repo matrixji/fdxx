@@ -27,7 +27,7 @@ template <typename LogAdapter, LogLevel level>
 class Logger
 {
 public:
-    explicit Logger(const LogAdapter& logAdapter, const char* filename, int line)
+    explicit Logger(LogAdapter& logAdapter, const char* filename, int line)
         : logAdapter_(logAdapter), filename_{getBasename(filename)}, line_{line}
     {
     }
@@ -66,7 +66,7 @@ private:
         }
         return basename;
     }
-    LogAdapter logAdapter_;
+    LogAdapter& logAdapter_;
     std::string filename_{};
     int line_;
     std::stringstream message_{};

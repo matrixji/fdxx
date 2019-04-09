@@ -47,6 +47,7 @@ void DefaultRunloop::add(std::shared_ptr<Handler> handler, const Event event)
 {
     return epoll_.add(handler, event);
 }
+
 void DefaultRunloop::remove(std::shared_ptr<Handler> handler)
 {
     return epoll_.del(handler);

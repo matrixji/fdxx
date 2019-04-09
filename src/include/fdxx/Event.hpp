@@ -1,5 +1,6 @@
 #pragma once
-#include "Bitmask.hpp"
+#include <string>
+#include "BitMask.hpp"
 
 namespace fdxx
 {
@@ -13,4 +14,9 @@ enum class Event : unsigned
 };
 }
 
-ENABLE_BITMASK_OPERATORS(fdxx::Event)
+namespace fdxx
+{
+std::string to_string(fdxx::Event event);
+}
+
+ENABLE_BIT_MASK_OPERATORS(fdxx::Event)

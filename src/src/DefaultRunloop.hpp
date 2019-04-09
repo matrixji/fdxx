@@ -28,7 +28,7 @@ private:
     bool running_{false};
     std::mutex mutex_{};
     std::condition_variable cond_{};
-    Epoll<LinuxEpoll> epoll_{};
     LogAdapter& log_;
+    Epoll<LinuxEpoll> epoll_{log_};
 };
 } // namespace fdxx

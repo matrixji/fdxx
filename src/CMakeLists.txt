@@ -5,10 +5,13 @@ set(CMAKE_CXX_STANDARD 14)
 project(fdxx)
 
 set(fdxx_sources
-    src/DefaultRunloop.cpp
-    src/RunloopFactory.cpp
-    src/LinuxEpoll.cpp
     src/DefaultLogger.cpp
+    src/DefaultRunloop.cpp
+    src/DefaultTimer.cpp
+    src/Event.cpp
+    src/LinuxEpoll.cpp
+    src/RunloopFactory.cpp
+    src/TimerFactory.cpp
     )
 
 include_directories(

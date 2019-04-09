@@ -6,6 +6,8 @@
 using fdxx::DefaultLogAdapter;
 using fdxx::LogLevel;
 
+namespace
+{
 std::string getTime()
 {
     const auto now = std::chrono::system_clock::now();
@@ -29,13 +31,12 @@ std::string getLevel(const LogLevel level)
         case LogLevel::error:
             return "ERROR";
         case LogLevel::critical:
-            return "CRIT";
+            return "CRITICAL";
         case LogLevel::debug:
             return "DEBUG";
-        default:
-            return "";
     }
 }
+} // namespace
 
 void DefaultLogAdapter::log(const LogLevel level, const std::string& message, const std::string& file, int line)
 {

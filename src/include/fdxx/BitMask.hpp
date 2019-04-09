@@ -55,7 +55,7 @@ typename std::enable_if<EnableBitMaskOperators<Enum>::enable, Enum>::type operat
 }
 } // namespace fdxx
 
-#define ENABLE_BITMASK_OPERATORS(x)        \
+#define ENABLE_BIT_MASK_OPERATORS(x)       \
     template <>                            \
     struct fdxx::EnableBitMaskOperators<x> \
     {                                      \

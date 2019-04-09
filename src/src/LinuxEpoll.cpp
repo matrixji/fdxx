@@ -1,11 +1,11 @@
 #include "LinuxEpoll.hpp"
-#include <cerrno>
 #include <functional>
+#include "fdxx/Fdxx.hpp"
 #include "fdxx/Handler.hpp"
 
 using fdxx::LinuxEpoll;
 
-inline int syscallWithCheck(const std::function<int(void)>& func)
+int syscallWithCheck(const std::function<int(void)>& func)
 {
     auto res = func();
     if (res < 0)
@@ -17,7 +17,7 @@ inline int syscallWithCheck(const std::function<int(void)>& func)
     return res;
 }
 
-LinuxEpoll::LinuxEpoll()
+LinuxEpoll::LinuxEpoll(LogAdapter& logAdapter) : log_(logAdapter)
 {
     epollFd_ = syscallWithCheck([this]() { return ::epoll_create1(0); });
 }
@@ -57,11 +57,11 @@ void LinuxEpoll::process(const int milliseconds)
     {
         events_ = std::make_unique<struct ::epoll_event[]>(handlers_.size());
     }
-    auto num = ::epoll_wait(epollFd_, events_.get(), handlers_.size(), milliseconds);
+    auto num = ::epoll_wait(epollFd_, events_.get(), static_cast<int>(handlers_.size()), milliseconds);
     for (int i = 0; i < num; ++i)
     {
-        auto fd = events_[0].data.fd;
-        auto events = events_[0].events;
+        auto fd = events_[i].data.fd;
+        auto events = events_[i].events;
         auto& context = handlers_.at(fd);
         if (((events & (EPOLLIN | EPOLLPRI)) != 0) && ((context.event & Event::read) != Event::none))
         {
