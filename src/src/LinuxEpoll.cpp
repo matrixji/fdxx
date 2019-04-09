@@ -1,49 +1,53 @@
-
 #include "LinuxEpoll.hpp"
-
-#include <iostream>
+#include <cerrno>
+#include <functional>
 #include "fdxx/Handler.hpp"
 
 using fdxx::LinuxEpoll;
 
-LinuxEpoll::LinuxEpoll()
+inline int syscallWithCheck(const std::function<int(void)>& func)
 {
-    epollFd_ = ::epoll_create1(0);
-}
-
-inline void epollCtlWithCheck(int epfd, int op, int fd, struct epoll_event *event)
-{
-    auto res = ::epoll_ctl(epfd, op, fd, event);
+    auto res = func();
     if (res < 0)
     {
-        auto errorNum = errno;
-        std::string error = "epoll_ctl failed, error: " + std::to_string(errno);
+        auto err = errno;
+        std::string error = "epoll_ctl failed, error: " + std::to_string(err);
         throw std::runtime_error(error);
     }
+    return res;
 }
 
-void LinuxEpoll::add(std::shared_ptr<Handler> handler, const Event event) {
-    struct ::epoll_event ev;
+LinuxEpoll::LinuxEpoll()
+{
+    epollFd_ = syscallWithCheck([this]() { return ::epoll_create1(0); });
+}
+
+void LinuxEpoll::add(std::shared_ptr<Handler> handler, const Event event)
+{
+    ::epoll_event ev{0};
     auto fd = handler->fd();
-     ev.events = EPOLLET;
+    ev.events = EPOLLET;
     ev.data.fd = fd;
-    if ((event & Event::read) != Event::none) {
+    if ((event & Event::read) != Event::none)
+    {
         ev.events |= EPOLLIN | EPOLLPRI;
     }
-    if ((event & Event::write) != Event::none) {
+    if ((event & Event::write) != Event::none)
+    {
         ev.events |= EPOLLOUT;
     }
-    if ((event & Event::error) != Event::none) {
-        ev.events |= EPOLLERR| EPOLLHUP| EPOLLRDHUP;
+    if ((event & Event::error) != Event::none)
+    {
+        ev.events |= EPOLLERR | EPOLLHUP | EPOLLRDHUP;
     }
-    epollCtlWithCheck(epollFd_, EPOLL_CTL_ADD, fd, &ev);
-    handlers_.emplace(fd, HandlerContext{handler, event});
+    syscallWithCheck([this, &fd, &ev]() { return ::epoll_ctl(epollFd_, EPOLL_CTL_ADD, fd, &ev); });
+    handlers_.emplace(fd, HandlerContext{std::move(handler), event});
 }
 
-void LinuxEpoll::del(std::shared_ptr<Handler> handler)
+void LinuxEpoll::del(const std::shared_ptr<Handler>& handler)
 {
     auto fd = handler->fd();
-    epollCtlWithCheck(epollFd_, EPOLL_CTL_DEL, fd, nullptr);
+    syscallWithCheck([this, &fd]() { return ::epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, nullptr); });
     handlers_.erase(fd);
 }
 
@@ -54,15 +58,22 @@ void LinuxEpoll::process(const int milliseconds)
         events_ = std::make_unique<struct ::epoll_event[]>(handlers_.size());
     }
     auto num = ::epoll_wait(epollFd_, events_.get(), handlers_.size(), milliseconds);
-    std::cout << num << " " << handlers_.size() << std::endl;
-    for(int i=0; i< num; ++i) {
+    for (int i = 0; i < num; ++i)
+    {
         auto fd = events_[0].data.fd;
         auto events = events_[0].events;
-        auto &handlerContext = handlers_.at(fd);
-        if ((events & (EPOLLIN | EPOLLPRI) != 0) && ((handlerContext.event & Event::read) != Event::none))
+        auto& context = handlers_.at(fd);
+        if (((events & (EPOLLIN | EPOLLPRI)) != 0) && ((context.event & Event::read) != Event::none))
         {
-            handlerContext.handler->handle(Event::read);
+            context.handler->handle(Event::read);
         }
-        
+        if (((events & EPOLLOUT) != 0) && ((context.event & Event::write) != Event::none))
+        {
+            context.handler->handle(Event::write);
+        }
+        if (((events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) != 0) && ((context.event & Event::error) != Event::none))
+        {
+            context.handler->handle(Event::error);
+        }
     }
 }

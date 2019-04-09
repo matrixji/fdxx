@@ -4,25 +4,30 @@
 
 #include "fdxx/Event.hpp"
 
-namespace fdxx {
-
+namespace fdxx
+{
 class Handler;
 
-template <typename T> class Epoll {
+template <typename T>
+class Epoll
+{
 public:
-  using Handlers = std::vector<std::unique_ptr<Handler>>;
-  template <typename... Args> Epoll(Args... args) : t{std::forward(args...)} {}
-  Epoll(){}
+    using Handlers = std::vector<std::unique_ptr<Handler>>;
 
-  void add(std::shared_ptr<Handler> handler, const Event event) {
-    return t.add(handler, event);
-  }
+    Epoll() = default;
 
-  void del(std::shared_ptr<Handler> handler) { return t.del(handler); }
+    template <typename... Args>
+    explicit Epoll(Args&&... args) : t{std::forward<Args>(args)...}
+    {
+    }
 
-  void process(const int milliseconds) { return t.process(milliseconds); }
+    void add(std::shared_ptr<Handler> handler, const Event event) { return t.add(std::move(handler), event); }
+
+    void del(const std::shared_ptr<Handler>& handler) { return t.del(handler); }
+
+    void process(const int milliseconds) { return t.process(milliseconds); }
 
 private:
-  T t;
+    T t;
 };
 } // namespace fdxx

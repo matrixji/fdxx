@@ -8,6 +8,7 @@ set(fdxx_sources
     src/DefaultRunloop.cpp
     src/RunloopFactory.cpp
     src/LinuxEpoll.cpp
+    src/DefaultLogger.cpp
     )
 
 include_directories(

@@ -1,11 +1,14 @@
 #pragma once
 #include <memory>
 
-namespace fdxx {
+namespace fdxx
+{
 class Runloop;
+class LogAdapter;
 
-class RunloopFactory {
+class RunloopFactory
+{
 public:
-  std::unique_ptr<Runloop> create(std::string name);
+    std::unique_ptr<Runloop> create(std::string name, LogAdapter&);
 };
 } // namespace fdxx
