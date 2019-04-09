@@ -1,6 +1,5 @@
 #pragma once
-
-#include "detail/Bitmask.hpp"
+#include "Bitmask.hpp"
 
 namespace fdxx
 {

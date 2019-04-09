@@ -1,6 +1,6 @@
 #include "fdxx/RunloopFactory.hpp"
-#include "DefaultRunloop.hpp"
 #include "fdxx/Logger.hpp"
+#include "DefaultRunloop.hpp"
 
 using fdxx::DefaultRunloop;
 using fdxx::Runloop;

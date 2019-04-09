@@ -1,4 +1,4 @@
-#include "fdxx/detail/DefaultLogger.hpp"
+#include "fdxx/DefaultLogger.hpp"
 #include <chrono>
 #include <iomanip>
 #include <iostream>

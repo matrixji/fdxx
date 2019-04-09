@@ -65,8 +65,10 @@ IncludeCategories:
     Priority:        2
   - Regex:           '^<.*'
     Priority:        3
-  - Regex:           '^"'
+  - Regex:           '^"fdxx/'
     Priority:        4
+  - Regex:           '^"'
+    Priority:        5
 IncludeIsMainRegex: '(Test)?$'
 IndentCaseLabels: true
 IndentPPDirectives: None

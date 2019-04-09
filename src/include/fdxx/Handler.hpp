@@ -1,11 +1,8 @@
 #pragma once
-
 #include "Event.hpp"
 
 namespace fdxx
 {
-class Runloop;
-
 class Handler
 {
 public:
