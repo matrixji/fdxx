@@ -1,7 +1,6 @@
 #include "LinuxEpoll.hpp"
 #include <functional>
 #include "fdxx/Fdxx.hpp"
-#include "fdxx/Handler.hpp"
 
 using fdxx::LinuxEpoll;
 

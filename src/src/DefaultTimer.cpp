@@ -1,7 +1,6 @@
 #include "DefaultTimer.hpp"
 #include <sys/timerfd.h>
 #include <unistd.h>
-#include <cstdio>
 #include "fdxx/Logger.hpp"
 
 using fdxx::DefaultTimer;

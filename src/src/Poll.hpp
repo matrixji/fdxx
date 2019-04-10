@@ -9,13 +9,13 @@ namespace fdxx
 class Handler;
 
 template <typename T>
-class Epoll
+class Poll
 {
 public:
-    Epoll() = default;
+    Poll() = default;
 
     template <typename... Args>
-    explicit Epoll(Args&&... args) : t{std::forward<Args>(args)...}
+    explicit Poll(Args&&... args) : t{std::forward<Args>(args)...}
     {
     }
 

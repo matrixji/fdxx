@@ -1,5 +1,4 @@
 #include "fdxx/Event.hpp"
-#include <string>
 
 std::string fdxx::to_string(fdxx::Event event)
 {

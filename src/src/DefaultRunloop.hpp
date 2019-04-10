@@ -2,8 +2,8 @@
 #include <condition_variable>
 #include <mutex>
 #include "fdxx/Runloop.hpp"
-#include "Epoll.hpp"
 #include "LinuxEpoll.hpp"
+#include "Poll.hpp"
 
 namespace fdxx
 {
@@ -29,6 +29,6 @@ private:
     std::mutex mutex_{};
     std::condition_variable cond_{};
     LogAdapter& log_;
-    Epoll<LinuxEpoll> epoll_{log_};
+    Poll<LinuxEpoll> epoll_{log_};
 };
 } // namespace fdxx
