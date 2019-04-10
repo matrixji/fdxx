@@ -9,6 +9,6 @@ class LogAdapter;
 class RunloopFactory
 {
 public:
-    std::unique_ptr<Runloop> create(std::string name, LogAdapter& logAdapter);
+    std::unique_ptr<Runloop> create(std::string name, std::shared_ptr<LogAdapter> logAdapter);
 };
 } // namespace fdxx

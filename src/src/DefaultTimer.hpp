@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <memory>
 #include "fdxx/Timer.hpp"
 
 namespace fdxx
@@ -10,11 +11,11 @@ class DefaultTimer : public Timer
 {
 public:
     using Callback = std::function<void(bool)>;
-    DefaultTimer(long, long, LogAdapter&, Callback);
+    DefaultTimer(int64_t timeout, int64_t interval, std::shared_ptr<LogAdapter> logAdapter, Callback callback);
     int fd() final;
-    void handle(Event) final;
+    void handle(Event event) final;
     void cancel() final;
-    void update(long, long) final;
+    void update(int64_t timeout, int64_t interval) final;
 
 private:
     LogAdapter& log_;
@@ -22,4 +23,4 @@ private:
     int fd_{-1};
 };
 
-}
+} // namespace fdxx

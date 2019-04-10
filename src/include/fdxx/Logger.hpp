@@ -19,6 +19,8 @@ public:
     LogAdapter() = default;
     LogAdapter(const LogAdapter&) = delete;
     LogAdapter& operator=(const LogAdapter&) = delete;
+    LogAdapter(LogAdapter&&) = default;
+    LogAdapter& operator=(LogAdapter&&) = default;
     virtual ~LogAdapter() = default;
     virtual void log(LogLevel level, const std::string& message, const std::string& file, int line) = 0;
 };
@@ -31,8 +33,11 @@ public:
         : logAdapter_(logAdapter), filename_{getBasename(filename)}, line_{line}
     {
     }
-
-    ~Logger() { logAdapter_.log(level, message_.str(), filename_, line_); }
+    Logger(const Logger&) = delete;
+    Logger& operator=(const Logger&) = delete;
+    Logger(Logger&&) = delete;
+    Logger& operator=(Logger&&) = delete;
+    ~Logger() { logAdapter_->log(level, message_.str(), filename_, line_); }
 
     template <typename Input>
     Logger& operator<<(const Input& inputMessage)

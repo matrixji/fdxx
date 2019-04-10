@@ -16,9 +16,9 @@ int syscallWithCheck(const std::function<int(void)>& func)
     return res;
 }
 
-LinuxEpoll::LinuxEpoll(LogAdapter& logAdapter) : log_(logAdapter)
+LinuxEpoll::LinuxEpoll(std::shared_ptr<LogAdapter> logAdapter) : log_(std::move(logAdapter))
 {
-    epollFd_ = syscallWithCheck([this]() { return ::epoll_create1(0); });
+    epollFd_ = syscallWithCheck([this]() { return ::epoll_create1(EPOLL_CLOEXEC); });
 }
 
 void LinuxEpoll::add(Handler& handler, const Event event)

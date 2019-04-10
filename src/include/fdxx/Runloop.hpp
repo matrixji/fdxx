@@ -12,6 +12,8 @@ public:
     Runloop() = default;
     Runloop(const Runloop&) = delete;
     Runloop& operator=(const Runloop&) = delete;
+    Runloop(Runloop&&) = default;
+    Runloop& operator=(Runloop&&) = default;
     virtual ~Runloop() = default;
     virtual void add(Handler& handler, Event event) = 0;
     virtual void remove(Handler& handler) = 0;

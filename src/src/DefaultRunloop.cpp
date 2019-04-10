@@ -7,7 +7,10 @@ using fdxx::Event;
 using fdxx::Handler;
 using fdxx::LogAdapter;
 
-DefaultRunloop::DefaultRunloop(std::string name, LogAdapter& logAdapter) : name_(std::move(name)), log_{logAdapter} {}
+DefaultRunloop::DefaultRunloop(std::string name, std::shared_ptr<LogAdapter> logAdapter)
+    : name_(std::move(name)), log_{std::move(logAdapter)}, epoll_{log_}
+{
+}
 
 DefaultRunloop::~DefaultRunloop()
 {

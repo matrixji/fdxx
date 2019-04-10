@@ -12,11 +12,8 @@ enum class Event : unsigned
     error = 0x0004,
     all = 0xffff,
 };
-}
 
-namespace fdxx
-{
 std::string to_string(fdxx::Event event);
-}
+} // namespace fdxx
 
 ENABLE_BIT_MASK_OPERATORS(fdxx::Event)

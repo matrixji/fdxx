@@ -18,8 +18,8 @@ public:
         Handler& handler;
         Event event;
     };
-    explicit LinuxEpoll(LogAdapter&);
-    void add(Handler&, Event);
+    explicit LinuxEpoll(std::shared_ptr<LogAdapter> logAdapter);
+    void add(Handler&, Event event);
     void del(Handler&);
     void process(int);
 
@@ -28,6 +28,6 @@ private:
     std::unordered_map<int, HandlerContext> handlers_{};
     std::unique_ptr<struct ::epoll_event[]> events_{nullptr};
     size_t eventsSize_{0};
-    LogAdapter& log_;
+    std::shared_ptr<LogAdapter> log_;
 };
 } // namespace fdxx

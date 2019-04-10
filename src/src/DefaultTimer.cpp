@@ -6,8 +6,8 @@
 using fdxx::DefaultTimer;
 using fdxx::LogAdapter;
 
-DefaultTimer::DefaultTimer(long timeout, long interval, LogAdapter& logAdapter, Callback callback)
-    : log_{logAdapter}, callback_{std::move(callback)}
+DefaultTimer::DefaultTimer(int64_t timeout, int64_t interval, std::shared_ptr<LogAdapter> logAdapter, Callback callback)
+    : log_{std::move(logAdapter)}, callback_{std::move(callback)}
 {
     fd_ = timerfd_create(CLOCK_MONOTONIC, 0);
     update(timeout, interval);
@@ -33,11 +33,13 @@ void DefaultTimer::cancel()
     update(0, 0);
 }
 
-void DefaultTimer::update(long timeout, long interval)
+void DefaultTimer::update(int64_t timeout, int64_t interval)
 {
+    constexpr int64_t msInSec{1000};
+    constexpr int64_t nsInMs{1000000};
     itimerspec tm{
-        {interval / 1000, (interval % 1000) * 1000000},
-        {timeout / 1000, (timeout % 1000) * 1000000},
+        {interval / msInSec, (interval % msInSec) * nsInMs},
+        {timeout / msInSec, (timeout % msInSec) * nsInMs},
     };
     timerfd_settime(fd_, 0, &tm, nullptr);
 }

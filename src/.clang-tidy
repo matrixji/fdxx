@@ -1,4 +1,7 @@
 ---
 Checks: >-
   *,
-  -l
+  -llvm-header-guard,
+  -llvm-include-order,
+  -fuchsia-overloaded-operator,
+  -fuchsia-default-arguments,

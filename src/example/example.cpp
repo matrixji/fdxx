@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv[])
 {
-    fdxx::DefaultLogAdapter logAdapter;
+    auto logAdapter = std::make_shared<fdxx::DefaultLogAdapter>();
     fdxx::RunloopFactory runloopFactory;
     fdxx::TimerFactory timerFactory;
     auto loop = runloopFactory.create("example", logAdapter);
