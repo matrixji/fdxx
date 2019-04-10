@@ -1,27 +1,31 @@
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <thread>
 #include <vector>
 #include "fdxx/Fdxx.hpp"
 
-int main(int argc, char* argv[])
+int main()
 {
     auto logAdapter = std::make_shared<fdxx::DefaultLogAdapter>();
     fdxx::RunloopFactory runloopFactory;
     fdxx::TimerFactory timerFactory;
     auto loop = runloopFactory.create("example", logAdapter);
     int count = 3;
-    std::vector<std::unique_ptr<fdxx::Timer>> timers;
     for (int i = 0; i < count; i++)
     {
-        auto timer = timerFactory.create(500 + (i * 500), 500, logAdapter, [&logAdapter, i](bool hasExpire) {
+        constexpr int64_t timeSpan{500};
+        auto timeout = timeSpan + (i * timeSpan);
+        auto interval = timeSpan;
+        auto timer = timerFactory.create(timeout, interval, logAdapter, [&logAdapter, i](bool hasExpire) {
             LOG_INFO(logAdapter) << "timer: " << i << " timeout.";
-            });
-        loop->add(*timer, fdxx::Event::all);
-        timers.emplace_back(std::move(timer));
+        });
+        std::shared_ptr<fdxx::Handler> timerHandler = std::make_shared<fdxx::Handler>(std::move(timer));
+        loop->add(timerHandler, fdxx::Event::all);
     }
     loop->start();
     std::this_thread::sleep_for(std::chrono::seconds(3));
     loop->stop();
+
     return 0;
 }

@@ -15,8 +15,8 @@ public:
     Runloop(Runloop&&) = default;
     Runloop& operator=(Runloop&&) = default;
     virtual ~Runloop() = default;
-    virtual void add(Handler& handler, Event event) = 0;
-    virtual void remove(Handler& handler) = 0;
+    virtual void add(std::shared_ptr<Handler> handler, Event event) = 0;
+    virtual void remove(const Handler& handler) = 0;
     virtual void run() = 0;
     virtual void start() = 0;
     virtual void stop() = 0;

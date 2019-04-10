@@ -15,12 +15,12 @@ class LinuxEpoll
 public:
     using HandlerContext = struct
     {
-        Handler& handler;
+        std::shared_ptr<Handler> handler;
         Event event;
     };
     explicit LinuxEpoll(std::shared_ptr<LogAdapter> logAdapter);
-    void add(Handler&, Event event);
-    void del(Handler&);
+    void add(std::shared_ptr<Handler> handler, Event event);
+    void del(const Handler& handler);
     void process(int);
 
 private:

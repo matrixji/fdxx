@@ -1,5 +1,4 @@
 #include "DefaultRunloop.hpp"
-#include <thread>
 #include "fdxx/Logger.hpp"
 
 using fdxx::DefaultRunloop;
@@ -19,19 +18,18 @@ DefaultRunloop::~DefaultRunloop()
 
 void DefaultRunloop::start()
 {
-    LOG_INFO(log_) << "starting ...";
+    LOG_INFO(log_) << "runner: " << name_ << "starting ...";
     std::thread th([this]() { run(); });
-    th.detach();
+    th.swap(th_);
 }
 
 void DefaultRunloop::stop()
 {
     if (running_)
     {
-        LOG_INFO(log_) << "stopping ...";
-        std::unique_lock<std::mutex> lock{mutex_};
+        LOG_INFO(log_) << "runner: " << name_ << "stopping ...";
         running_ = false;
-        cond_.wait(lock);
+        th_.join();
     }
 }
 
@@ -43,16 +41,14 @@ void DefaultRunloop::run()
     {
         epoll_.process(pollingTime);
     }
-    std::unique_lock<std::mutex> lock{mutex_};
-    cond_.notify_one();
 }
 
-void DefaultRunloop::add(Handler& handler, const Event event)
+void DefaultRunloop::add(std::shared_ptr<Handler> handler, const Event event)
 {
-    return epoll_.add(handler, event);
+    return epoll_.add(std::move(handler), event);
 }
 
-void DefaultRunloop::remove(Handler& handler)
+void DefaultRunloop::remove(const Handler& handler)
 {
     return epoll_.del(handler);
 }

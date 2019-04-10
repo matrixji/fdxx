@@ -13,7 +13,7 @@ DefaultTimer::DefaultTimer(int64_t timeout, int64_t interval, std::shared_ptr<Lo
     update(timeout, interval);
 }
 
-int DefaultTimer::fd()
+int DefaultTimer::fd() const
 {
     return fd_;
 }

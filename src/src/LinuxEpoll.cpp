@@ -21,10 +21,10 @@ LinuxEpoll::LinuxEpoll(std::shared_ptr<LogAdapter> logAdapter) : log_(std::move(
     epollFd_ = syscallWithCheck([this]() { return ::epoll_create1(EPOLL_CLOEXEC); });
 }
 
-void LinuxEpoll::add(Handler& handler, const Event event)
+void LinuxEpoll::add(std::shared_ptr<Handler> handler, const Event event)
 {
     ::epoll_event ev{0};
-    auto fd = handler.fd();
+    auto fd = handler->fd();
     ev.events = EPOLLET;
     ev.data.fd = fd;
     if ((event & Event::read) != Event::none)
@@ -40,10 +40,10 @@ void LinuxEpoll::add(Handler& handler, const Event event)
         ev.events |= EPOLLERR | EPOLLHUP | EPOLLRDHUP;
     }
     syscallWithCheck([this, &fd, &ev]() { return ::epoll_ctl(epollFd_, EPOLL_CTL_ADD, fd, &ev); });
-    handlers_.emplace(fd, HandlerContext{handler, event});
+    handlers_.emplace(fd, HandlerContext{std::move(handler), event});
 }
 
-void LinuxEpoll::del(Handler& handler)
+void LinuxEpoll::del(const Handler& handler)
 {
     auto fd = handler.fd();
     syscallWithCheck([this, &fd]() { return ::epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, nullptr); });
@@ -62,17 +62,20 @@ void LinuxEpoll::process(const int milliseconds)
         auto fd = events_[i].data.fd;
         auto events = events_[i].events;
         auto& context = handlers_.at(fd);
-        if (((events & (EPOLLIN | EPOLLPRI)) != 0) && ((context.event & Event::read) != Event::none))
+        auto& handler = *context.handler;
+        const auto& event = context.event;
+
+        if (((events & (EPOLLIN | EPOLLPRI)) != 0) && ((event & Event::read) != Event::none))
         {
-            context.handler.handle(Event::read);
+            handler.handle(Event::read);
         }
-        if (((events & EPOLLOUT) != 0) && ((context.event & Event::write) != Event::none))
+        if (((events & EPOLLOUT) != 0) && ((event & Event::write) != Event::none))
         {
-            context.handler.handle(Event::write);
+            handler.handle(Event::write);
         }
-        if (((events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) != 0) && ((context.event & Event::error) != Event::none))
+        if (((events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) != 0) && ((event & Event::error) != Event::none))
         {
-            context.handler.handle(Event::error);
+            handler.handle(Event::error);
         }
     }
 }

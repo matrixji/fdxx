@@ -1,7 +1,6 @@
 #pragma once
-#include <condition_variable>
 #include <memory>
-#include <mutex>
+#include <thread>
 #include "fdxx/Runloop.hpp"
 #include "LinuxEpoll.hpp"
 #include "Poll.hpp"
@@ -15,10 +14,14 @@ class DefaultRunloop : public Runloop
 {
 public:
     DefaultRunloop(std::string name, std::shared_ptr<LogAdapter> logAdapter);
+    DefaultRunloop(const DefaultRunloop&) = delete;
+    DefaultRunloop& operator=(const DefaultRunloop&) = delete;
+    DefaultRunloop(DefaultRunloop&&) = default;
+    DefaultRunloop& operator=(DefaultRunloop&&) = default;
     ~DefaultRunloop() final;
 
-    void add(Handler& handler, Event event) override;
-    void remove(Handler& handler) override;
+    void add(std::shared_ptr<Handler> handler, Event event) override;
+    void remove(const Handler& handler) override;
     void run() override;
     void start() override;
     void stop() override;
@@ -26,9 +29,8 @@ public:
 private:
     std::string name_;
     bool running_{false};
-    std::mutex mutex_{};
-    std::condition_variable cond_{};
     std::shared_ptr<LogAdapter> log_;
     Poll<LinuxEpoll> epoll_;
+    std::thread th_;
 };
 } // namespace fdxx

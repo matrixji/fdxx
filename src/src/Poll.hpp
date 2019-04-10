@@ -19,9 +19,9 @@ public:
     {
     }
 
-    void add(Handler& handler, const Event event) { return t.add(handler, event); }
+    void add(std::shared_ptr<Handler> handler, const Event event) { return t.add(std::move(handler), event); }
 
-    void del(Handler& handler) { return t.del(handler); }
+    void del(const Handler& handler) { return t.del(handler); }
 
     void process(const int milliseconds) { return t.process(milliseconds); }
 

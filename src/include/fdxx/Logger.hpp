@@ -53,9 +53,8 @@ public:
     }
 
 private:
-    static std::string getBasename(const char* filename)
+    static const char* getBasename(const char* filename)
     {
-        std::string basename;
         auto ch = ::strrchr(filename, '/');
         if (ch == nullptr)
         {
@@ -63,13 +62,10 @@ private:
         }
         if (ch != nullptr)
         {
-            basename = ch + 1;
+            std::advance(ch, 1);
+            return ch;
         }
-        else
-        {
-            basename = filename;
-        }
-        return basename;
+        return filename;
     }
     LogAdapter& logAdapter_;
     std::string filename_{};
