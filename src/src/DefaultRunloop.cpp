@@ -34,10 +34,11 @@ void DefaultRunloop::stop()
 
 void DefaultRunloop::run()
 {
+    constexpr int pollingTime{100};
     running_ = true;
     while (running_)
     {
-        epoll_.process(100);
+        epoll_.process(pollingTime);
     }
     std::unique_lock<std::mutex> lock{mutex_};
     cond_.notify_one();

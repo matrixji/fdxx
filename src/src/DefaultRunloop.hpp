@@ -14,7 +14,7 @@ class DefaultRunloop : public Runloop
 {
 public:
     DefaultRunloop(std::string name, LogAdapter& logAdapter);
-    DefaultRunloop(const Runloop&) = delete;
+    DefaultRunloop(const DefaultRunloop&) = delete;
     DefaultRunloop& operator=(const DefaultRunloop&) = delete;
     ~DefaultRunloop() override;
     void add(Handler&, Event) override;
