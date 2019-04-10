@@ -18,7 +18,7 @@ DefaultRunloop::~DefaultRunloop()
 
 void DefaultRunloop::start()
 {
-    LOG_INFO(log_) << "runner: " << name_ << "starting ...";
+    LOG_INFO(log_) << "runner: " << name_ << " starting ...";
     std::thread th([this]() { run(); });
     th.swap(th_);
 }
@@ -27,7 +27,7 @@ void DefaultRunloop::stop()
 {
     if (running_)
     {
-        LOG_INFO(log_) << "runner: " << name_ << "stopping ...";
+        LOG_INFO(log_) << "runner: " << name_ << " stopping ...";
         running_ = false;
         th_.join();
     }

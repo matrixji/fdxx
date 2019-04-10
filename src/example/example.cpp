@@ -20,7 +20,7 @@ int main()
         auto timer = timerFactory.create(timeout, interval, logAdapter, [&logAdapter, i](bool hasExpire) {
             LOG_INFO(logAdapter) << "timer: " << i << " timeout.";
         });
-        std::shared_ptr<fdxx::Handler> timerHandler = std::make_shared<fdxx::Handler>(std::move(timer));
+        std::shared_ptr<fdxx::Handler> timerHandler{std::move(timer)};
         loop->add(timerHandler, fdxx::Event::all);
     }
     loop->start();
