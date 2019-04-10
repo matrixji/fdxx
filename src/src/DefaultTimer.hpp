@@ -9,7 +9,7 @@ class LogAdapter;
 class DefaultTimer : public Timer
 {
 public:
-    using Callback = std::function<void(Timer&, bool)>;
+    using Callback = std::function<void(bool)>;
     DefaultTimer(long, long, LogAdapter&, Callback);
     int fd() final;
     void handle(Event) final;

@@ -20,7 +20,7 @@ public:
     LogAdapter(const LogAdapter&) = delete;
     LogAdapter& operator=(const LogAdapter&) = delete;
     virtual ~LogAdapter() = default;
-    virtual void log(LogLevel, const std::string&, const std::string&, int) = 0;
+    virtual void log(LogLevel level, const std::string& message, const std::string& file, int line) = 0;
 };
 
 template <typename LogAdapter, LogLevel level>

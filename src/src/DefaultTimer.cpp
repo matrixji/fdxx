@@ -25,7 +25,7 @@ void DefaultTimer::handle(const Event event)
         uint64_t ts;
         ::read(fd_, &ts, sizeof(ts));
     }
-    callback_(*this, true);
+    callback_(true);
 }
 
 void DefaultTimer::cancel()

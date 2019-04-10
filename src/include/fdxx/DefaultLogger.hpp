@@ -6,6 +6,6 @@ namespace fdxx
 class DefaultLogAdapter : public LogAdapter
 {
 public:
-    void log(fdxx::LogLevel, const std::string&, const std::string&, int) final;
+    void log(LogLevel level, const std::string& message, const std::string& file, int line) final;
 };
 } // namespace fdxx

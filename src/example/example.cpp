@@ -14,9 +14,8 @@ int main(int argc, char* argv[])
     std::vector<std::unique_ptr<fdxx::Timer>> timers;
     for (int i = 0; i < count; i++)
     {
-        auto timer = timerFactory.create(
-            500 + (i * 500), 500, logAdapter, [&logAdapter, i](fdxx::Timer& timer, bool hasTimeout) {
-                LOG_INFO(logAdapter) << "timer: " << i << " timeout.";
+        auto timer = timerFactory.create(500 + (i * 500), 500, logAdapter, [&logAdapter, i](bool hasExpire) {
+            LOG_INFO(logAdapter) << "timer: " << i << " timeout.";
             });
         loop->add(*timer, fdxx::Event::all);
         timers.emplace_back(std::move(timer));
