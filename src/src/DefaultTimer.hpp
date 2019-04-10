@@ -1,18 +1,20 @@
 #pragma once
 #include <functional>
-#include "fdxx/Handler.hpp"
+#include "fdxx/Timer.hpp"
 
 namespace fdxx
 {
 class LogAdapter;
 
-class DefaultTimer : public Handler
+class DefaultTimer : public Timer
 {
 public:
-    using Callback = std::function<void(Handler&, bool)>;
+    using Callback = std::function<void(Timer&, bool)>;
     DefaultTimer(long, long, LogAdapter&, Callback);
     int fd() final;
     void handle(Event) final;
+    void cancel() final;
+    void update(long, long) final;
 
 private:
     LogAdapter& log_;

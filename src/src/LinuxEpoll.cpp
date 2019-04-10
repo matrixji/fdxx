@@ -22,10 +22,10 @@ LinuxEpoll::LinuxEpoll(LogAdapter& logAdapter) : log_(logAdapter)
     epollFd_ = syscallWithCheck([this]() { return ::epoll_create1(0); });
 }
 
-void LinuxEpoll::add(std::shared_ptr<Handler> handler, const Event event)
+void LinuxEpoll::add(Handler& handler, const Event event)
 {
     ::epoll_event ev{0};
-    auto fd = handler->fd();
+    auto fd = handler.fd();
     ev.events = EPOLLET;
     ev.data.fd = fd;
     if ((event & Event::read) != Event::none)
@@ -41,12 +41,12 @@ void LinuxEpoll::add(std::shared_ptr<Handler> handler, const Event event)
         ev.events |= EPOLLERR | EPOLLHUP | EPOLLRDHUP;
     }
     syscallWithCheck([this, &fd, &ev]() { return ::epoll_ctl(epollFd_, EPOLL_CTL_ADD, fd, &ev); });
-    handlers_.emplace(fd, HandlerContext{std::move(handler), event});
+    handlers_.emplace(fd, HandlerContext{handler, event});
 }
 
-void LinuxEpoll::del(const std::shared_ptr<Handler>& handler)
+void LinuxEpoll::del(Handler& handler)
 {
-    auto fd = handler->fd();
+    auto fd = handler.fd();
     syscallWithCheck([this, &fd]() { return ::epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, nullptr); });
     handlers_.erase(fd);
 }
@@ -65,15 +65,15 @@ void LinuxEpoll::process(const int milliseconds)
         auto& context = handlers_.at(fd);
         if (((events & (EPOLLIN | EPOLLPRI)) != 0) && ((context.event & Event::read) != Event::none))
         {
-            context.handler->handle(Event::read);
+            context.handler.handle(Event::read);
         }
         if (((events & EPOLLOUT) != 0) && ((context.event & Event::write) != Event::none))
         {
-            context.handler->handle(Event::write);
+            context.handler.handle(Event::write);
         }
         if (((events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) != 0) && ((context.event & Event::error) != Event::none))
         {
-            context.handler->handle(Event::error);
+            context.handler.handle(Event::error);
         }
     }
 }

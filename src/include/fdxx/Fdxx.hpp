@@ -5,4 +5,5 @@
 #include "Logger.hpp"
 #include "Runloop.hpp"
 #include "RunloopFactory.hpp"
+#include "Timer.hpp"
 #include "TimerFactory.hpp"

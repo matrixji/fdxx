@@ -43,12 +43,12 @@ void DefaultRunloop::run()
     cond_.notify_one();
 }
 
-void DefaultRunloop::add(std::shared_ptr<Handler> handler, const Event event)
+void DefaultRunloop::add(Handler& handler, const Event event)
 {
     return epoll_.add(handler, event);
 }
 
-void DefaultRunloop::remove(std::shared_ptr<Handler> handler)
+void DefaultRunloop::remove(Handler& handler)
 {
     return epoll_.del(handler);
 }

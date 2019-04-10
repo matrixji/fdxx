@@ -17,8 +17,8 @@ public:
     DefaultRunloop(const Runloop&) = delete;
     DefaultRunloop& operator=(const DefaultRunloop&) = delete;
     ~DefaultRunloop() override;
-    void add(std::shared_ptr<Handler> handler, Event) override;
-    void remove(std::shared_ptr<Handler> handler) override;
+    void add(Handler&, Event) override;
+    void remove(Handler&) override;
     void run() override;
     void start() override;
     void stop() override;
