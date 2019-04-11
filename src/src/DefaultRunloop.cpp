@@ -13,7 +13,11 @@ DefaultRunloop::DefaultRunloop(std::string name, std::shared_ptr<LogAdapter> log
 
 DefaultRunloop::~DefaultRunloop()
 {
-    stop();
+    if (running_)
+    {
+        running_ = false;
+        th_.join();
+    }
 }
 
 void DefaultRunloop::start()
@@ -35,7 +39,7 @@ void DefaultRunloop::stop()
 
 void DefaultRunloop::run()
 {
-    constexpr int pollingTime{100};
+    constexpr int pollingTime{10};
     running_ = true;
     while (running_)
     {
@@ -48,7 +52,7 @@ void DefaultRunloop::add(std::shared_ptr<Handler> handler, const Event event)
     return epoll_.add(std::move(handler), event);
 }
 
-void DefaultRunloop::remove(const Handler& handler)
+void DefaultRunloop::del(std::shared_ptr<Handler> handler)
 {
-    return epoll_.del(handler);
+    return epoll_.del(std::move(handler));
 }

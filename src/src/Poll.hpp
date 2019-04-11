@@ -21,7 +21,7 @@ public:
 
     void add(std::shared_ptr<Handler> handler, const Event event) { return t.add(std::move(handler), event); }
 
-    void del(const Handler& handler) { return t.del(handler); }
+    void del(std::shared_ptr<Handler> handler) { return t.del(std::move(handler)); }
 
     void process(const int milliseconds) { return t.process(milliseconds); }
 

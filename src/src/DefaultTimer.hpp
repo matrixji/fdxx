@@ -1,5 +1,4 @@
 #pragma once
-#include <functional>
 #include <memory>
 #include "fdxx/Timer.hpp"
 
@@ -10,14 +9,21 @@ class LogAdapter;
 class DefaultTimer : public Timer
 {
 public:
-    using Callback = std::function<void(bool)>;
     DefaultTimer(int64_t timeout, int64_t interval, std::shared_ptr<LogAdapter> logAdapter, Callback callback);
-    int fd() const final;
-    void handle(Event event) final;
-    void cancel() final;
-    void update(int64_t timeout, int64_t interval) final;
+    DefaultTimer(const DefaultTimer&) = delete;
+    DefaultTimer& operator=(const DefaultTimer&) = delete;
+    DefaultTimer(DefaultTimer&&) = default;
+    DefaultTimer& operator=(DefaultTimer&&) = default;
+    ~DefaultTimer() override;
+
+    int fd() override;
+    void handle(Event event) override;
+    void cancel() override;
+    void update(int64_t timeout, int64_t interval) override;
+    void setCallback(Callback callback) override;
 
 private:
+    void update_(int64_t timeout, int64_t interval);
     std::shared_ptr<LogAdapter> log_;
     Callback callback_;
     int fd_{-1};

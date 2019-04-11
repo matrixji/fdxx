@@ -22,19 +22,26 @@ std::string getTime()
 
 std::string getLevel(const LogLevel level)
 {
+    std::string ret{"NONE"};
     switch (level)
     {
         case LogLevel::info:
-            return "INFO";
+            ret = "INFO";
+            break;
         case LogLevel::warn:
-            return "WARN";
+            ret = "WARN";
+            break;
         case LogLevel::error:
-            return "ERROR";
+            ret = "ERROR";
+            break;
         case LogLevel::critical:
-            return "CRITICAL";
+            ret = "CRITICAL";
+            break;
         case LogLevel::debug:
-            return "DEBUG";
+            ret = "DEBUG";
+            break;
     }
+    return ret;
 }
 } // namespace
 

@@ -13,7 +13,7 @@ public:
     Handler& operator=(Handler&&) = default;
     virtual ~Handler() = default;
 
-    virtual int fd() const = 0;
+    virtual int fd() = 0;
     virtual void handle(Event event) = 0;
 };
 

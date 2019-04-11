@@ -1,21 +1,19 @@
 #pragma once
-#include <functional>
 #include <memory>
+#include "Timer.hpp"
 
 namespace fdxx
 {
-class Timer;
 class LogAdapter;
 
 class TimerFactory
 {
 public:
-    using Callback = std::function<void(bool isExpire)>;
     std::unique_ptr<Timer> create(
         int64_t timeout,
         int64_t interval,
         std::shared_ptr<LogAdapter> logAdapter,
-        Callback callback);
-    std::unique_ptr<Timer> create(int64_t timeout, std::shared_ptr<LogAdapter> logAdapter, Callback callback);
+        Timer::Callback callback);
+    std::unique_ptr<Timer> create(int64_t timeout, std::shared_ptr<LogAdapter> logAdapter, Timer::Callback callback);
 };
 } // namespace fdxx

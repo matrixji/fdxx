@@ -21,9 +21,9 @@ LinuxEpoll::LinuxEpoll(std::shared_ptr<LogAdapter> logAdapter) : log_(std::move(
     epollFd_ = syscallWithCheck([this]() { return ::epoll_create1(EPOLL_CLOEXEC); });
 }
 
-void LinuxEpoll::add(std::shared_ptr<Handler> handler, const Event event)
+void LinuxEpoll::add(const std::shared_ptr<Handler>& handler, const Event event)
 {
-    ::epoll_event ev{0};
+    ::epoll_event ev{};
     auto fd = handler->fd();
     ev.events = EPOLLET;
     ev.data.fd = fd;
@@ -40,13 +40,13 @@ void LinuxEpoll::add(std::shared_ptr<Handler> handler, const Event event)
         ev.events |= EPOLLERR | EPOLLHUP | EPOLLRDHUP;
     }
     syscallWithCheck([this, &fd, &ev]() { return ::epoll_ctl(epollFd_, EPOLL_CTL_ADD, fd, &ev); });
-    handlers_.emplace(fd, HandlerContext{std::move(handler), event});
+    handlers_.emplace(fd, HandlerContext{handler, event});
 }
 
-void LinuxEpoll::del(const Handler& handler)
+void LinuxEpoll::del(const std::shared_ptr<Handler>& handler)
 {
-    auto fd = handler.fd();
-    syscallWithCheck([this, &fd]() { return ::epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, nullptr); });
+    auto fd = handler->fd();
+    syscallWithCheck([this, fd]() { return ::epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, nullptr); });
     handlers_.erase(fd);
 }
 

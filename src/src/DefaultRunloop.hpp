@@ -21,7 +21,7 @@ public:
     ~DefaultRunloop() final;
 
     void add(std::shared_ptr<Handler> handler, Event event) override;
-    void remove(const Handler& handler) override;
+    void del(std::shared_ptr<Handler> handler) override;
     void run() override;
     void start() override;
     void stop() override;

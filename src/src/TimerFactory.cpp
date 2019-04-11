@@ -3,6 +3,7 @@
 
 using fdxx::DefaultTimer;
 using fdxx::Timer;
+using Callback = fdxx::Timer::Callback;
 using fdxx::TimerFactory;
 
 std::unique_ptr<Timer> TimerFactory::create(int64_t timeout, std::shared_ptr<LogAdapter> logger, Callback callback)

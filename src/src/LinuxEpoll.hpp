@@ -13,17 +13,17 @@ class LogAdapter;
 class LinuxEpoll
 {
 public:
+    explicit LinuxEpoll(std::shared_ptr<LogAdapter> logAdapter);
+    void add(const std::shared_ptr<Handler>& handler, Event event);
+    void del(const std::shared_ptr<Handler>& handler);
+    void process(int);
+
+private:
     using HandlerContext = struct
     {
         std::shared_ptr<Handler> handler;
         Event event;
     };
-    explicit LinuxEpoll(std::shared_ptr<LogAdapter> logAdapter);
-    void add(std::shared_ptr<Handler> handler, Event event);
-    void del(const Handler& handler);
-    void process(int);
-
-private:
     int epollFd_{0};
     std::unordered_map<int, HandlerContext> handlers_{};
     std::unique_ptr<struct ::epoll_event[]> events_{nullptr};
